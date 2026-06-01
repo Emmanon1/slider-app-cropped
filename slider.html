@@ -1,215 +1,65 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slider Validation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Slider App</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #1a1a2e;
-            font-family: Arial, sans-serif;
-        }
-        .main-container {
-            position: relative;
-            width: 350px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .background-image {
-            position: relative;
+        html, body {
             width: 100%;
-        }
-        .background-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 12px;
-        }
-        .slider-overlay {
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            z-index: 10;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
         }
         .slider-container {
+            width: 100vw;
+            height: 100vh;
             position: relative;
-            width: 100%;
-            height: 54px;
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 27px;
             overflow: hidden;
-            border: 2px solid #01615F;
-            user-select: none;
-            -webkit-user-select: none;
-            touch-action: none;
         }
-        .slider-fill {
+        .slider-container img {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
             position: absolute;
             top: 0;
             left: 0;
-            height: 100%;
-            width: 0px;
-            background-color: rgba(1, 97, 95, 0.2);
-            border-radius: 27px;
+            transition: opacity 0.5s ease-in-out;
         }
-        .slider-thumb {
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            width: 46px;
-            height: 46px;
-            background-color: #01615F;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            z-index: 2;
-        }
-        .slider-text {
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #01615F;
-            font-size: 14px;
-            font-weight: bold;
-            pointer-events: none;
+        .slider-container img.active {
+            opacity: 1;
             z-index: 1;
         }
-        #mainImage {
-            display: none;
-            width: 100%;
-            border-radius: 12px;
-        }
-        .validated .slider-container {
-            background-color: #01615F;
-            border-color: #01615F;
-        }
-        .validated .slider-text {
-            color: white;
+        .slider-container img.hidden {
+            opacity: 0;
+            z-index: 0;
         }
     </style>
 </head>
 <body>
-    <div class="main-container" id="mainContainer">
-        <div class="background-image">
-            <img id="bgImage" src="Image 1.jpeg" alt="Commande">
-            <div class="slider-overlay">
-                <div class="slider-container" id="sliderContainer">
-                    <div class="slider-fill" id="sliderFill"></div>
-                    <div class="slider-thumb" id="sliderThumb">&#10140;</div>
-                    <div class="slider-text">Valider pour r&#233;cup&#233;rer</div>
-                </div>
-            </div>
-        </div>
-        <img id="mainImage" src="Image 2.jpeg" alt="Validation">
+    <div class="slider-container">
+        <img src="Image 1.jpeg" class="active" alt="Slide 1">
+        <img src="Image 2.jpeg" class="hidden" alt="Slide 2">
     </div>
-
-<script>
-    const thumb = document.getElementById('sliderThumb');
-    const container = document.getElementById('sliderContainer');
-    const fill = document.getElementById('sliderFill');
-    const mainImage = document.getElementById('mainImage');
-    const bgImage = document.getElementById('bgImage');
-    const mainContainer = document.getElementById('mainContainer');
-
-    let isDragging = false;
-    let startX = 0;
-    let thumbLeft = 4;
-
-    function initMaxLeft() {
-        return container.offsetWidth - thumb.offsetWidth - 4;
-    }
-
-    thumb.addEventListener('mousedown', function(e) {
-        isDragging = true;
-        startX = e.clientX - thumbLeft;
-        e.preventDefault();
-    });
-
-    document.addEventListener('mousemove', function(e) {
-        if (!isDragging) return;
-        let newLeft = e.clientX - startX;
-        let currentMax = initMaxLeft();
-        if (newLeft < 4) newLeft = 4;
-        if (newLeft > currentMax) newLeft = currentMax;
-        thumbLeft = newLeft;
-        thumb.style.left = newLeft + 'px';
-        fill.style.width = (newLeft + 46) + 'px';
-    });
-
-    document.addEventListener('mouseup', function(e) {
-        if (!isDragging) return;
-        isDragging = false;
-        let currentMax = initMaxLeft();
-        if (thumbLeft >= currentMax - 5) {
-            mainImage.src = 'Image 2.jpeg';
-            mainImage.style.display = 'block';
-            document.querySelector('.background-image').style.display = 'none';
-            thumb.style.left = currentMax + 'px';
-            fill.style.width = '100%';
-            container.style.backgroundColor = '#01615F';
-            document.querySelector('.slider-text').textContent = 'Valid\u00e9 !';
-            thumb.style.pointerEvents = 'none';
-        } else {
-            thumbLeft = 4;
-            thumb.style.left = '4px';
-            fill.style.width = '0px';
+    <script>
+        const images = document.querySelectorAll('.slider-container img');
+        let current = 0;
+        function nextSlide() {
+            images[current].classList.remove('active');
+            images[current].classList.add('hidden');
+            current = (current + 1) % images.length;
+            images[current].classList.remove('hidden');
+            images[current].classList.add('active');
         }
-    });
-
-    thumb.addEventListener('touchstart', function(e) {
-        isDragging = true;
-        startX = e.touches[0].clientX - thumbLeft;
-        e.preventDefault();
-    });
-
-    document.addEventListener('touchmove', function(e) {
-        if (!isDragging) return;
-        let newLeft = e.touches[0].clientX - startX;
-        let currentMax = initMaxLeft();
-        if (newLeft < 4) newLeft = 4;
-        if (newLeft > currentMax) newLeft = currentMax;
-        thumbLeft = newLeft;
-        thumb.style.left = newLeft + 'px';
-        fill.style.width = (newLeft + 46) + 'px';
-    });
-
-    document.addEventListener('touchend', function(e) {
-        if (!isDragging) return;
-        isDragging = false;
-        let currentMax = initMaxLeft();
-        if (thumbLeft >= currentMax - 5) {
-            mainImage.src = 'Image 2.jpeg';
-            mainImage.style.display = 'block';
-            document.querySelector('.background-image').style.display = 'none';
-            thumb.style.left = currentMax + 'px';
-            fill.style.width = '100%';
-            container.style.backgroundColor = '#01615F';
-            document.querySelector('.slider-text').textContent = 'Valid\u00e9 !';
-            thumb.style.pointerEvents = 'none';
-        } else {
-            thumbLeft = 4;
-            thumb.style.left = '4px';
-            fill.style.width = '0px';
-        }
-    });
-</script>
+        setInterval(nextSlide, 4000);
+        document.querySelector('.slider-container').addEventListener('click', nextSlide);
+    </script>
 </body>
 </html>
